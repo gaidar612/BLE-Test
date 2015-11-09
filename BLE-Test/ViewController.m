@@ -18,9 +18,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     
-    [centralManager scanForPeripheralsWithServices:nil options:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -28,20 +26,38 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)onScan:(id)sender {
+    self.labelText.text = @"";
+    
+    if (centralManager)
+    {
+        [centralManager stopScan];
+        centralManager = nil;
+    }
+    
+    centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
+}
+
 - (void) centralManagerDidUpdateState:(CBCentralManager *)central {
 
     CBCentralManagerState state = central.state;
     
     NSLog(@"State: %ld", state);
+    
+    if (state == CBCentralManagerStatePoweredOn)
+    {
+        [centralManager scanForPeripheralsWithServices:nil options:nil];
+    }
 }
 
 - (void) centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     
     NSString *id = [self getPeripheralId:peripheral];
-    
+    self.labelText.text = id;
     
     NSLog(@"Peripheral id: %@", id);
     
+    [centralManager stopScan];
 }
 
 - (NSString *) getPeripheralId:(CBPeripheral *)aPeripheral

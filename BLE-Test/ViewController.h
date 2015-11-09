@@ -12,6 +12,7 @@
 @interface ViewController : UIViewController <CBCentralManagerDelegate> {
     CBCentralManager *centralManager;
 }
+@property (weak, nonatomic) IBOutlet UILabel *labelText;
 
 - (NSString *) getPeripheralId:(CBPeripheral *)aPeripheral;
 
